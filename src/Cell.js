@@ -1,4 +1,12 @@
+/**
+ * @class Cell
+ */
 export default class Cell {
+  /**
+   * @constructs Cell
+   * @param {uint} x
+   * @param {uint} y
+   */
   constructor(x, y) {
     this.x = x;
     this.y = y;
