@@ -1,4 +1,5 @@
 import test from 'tape';
+import { getRandomValueInRange } from 'math-utils';
 import Grid from '../src/Grid';
 import Cell from '../src/Cell';
 
@@ -8,28 +9,45 @@ test('Grid', ({ test }) => {
 
     const grid = new Grid();
 
-    t.ok(grid instanceof Grid);
+    t.ok(grid instanceof Grid, 'grid is instance of Grid');
   });
 
   test('if dx and dy are provided, generate the cells', t => {
-    t.plan(1);
+    const dx = 10;
+    const dy = 10;
     
-    const grid = new Grid(10, 10);
+    const grid = new Grid(dx, dy);
 
-    t.equal(grid._cells.length, 10 * 10);
+    t.equal(grid._cells.length, dx, grid._cells.length + ' columns');
+    
+    for(let i = 0; i < grid._cells.length; i++) {
+      const row = grid._cells[i];
+      t.equal(row.length, dy, row.length + ' rows for column ' + i);
+    }
+
+    t.end();
   });
 
 
   test('should tell if a set of coordinates is inside the grid', t => {
-    t.plan(5);
+    const sampleSize = 10;
+    const dx = 10;
+    const dy = 10;
 
-    const grid = new Grid(10, 10);
+    const grid = new Grid(dx, dy);
 
-    t.ok(grid.contains(5, 5));
-    t.notOk(grid.contains(15, 5));
-    t.notOk(grid.contains(5, 15));
-    t.notOk(grid.contains(-1, 5));
-    t.notOk(grid.contains(5, -1));
+    for(let i = 0; i < sampleSize; i++) {
+      const x = getRandomValueInRange(-5, 15, true);
+      const y = getRandomValueInRange(-5, 15, true);
+
+      if(x >= 0 && x < dx && y >= 0 && y < dy) {
+        t.ok(grid.contains(x, y), '(' + x + ' ,' + y + ') is inside');
+      } else {
+        t.notOk(grid.contains(x, y), '(' + x + ' ,' + y + ') is outside');
+      }
+    }
+
+    t.end();
   });
 
   test('it should be possible to get a cell by coordinates', t => {
@@ -39,9 +57,9 @@ test('Grid', ({ test }) => {
 
     const cell = grid.getCellAt(2, 5);
 
-    t.ok(cell instanceof Cell);
-    t.ok(cell.x, 2);
-    t.ok(cell.y, 5);
+    t.ok(cell instanceof Cell, 'cell is instanceof Cell');
+    t.equal(cell.x, 2, 'cell x is correct');
+    t.equal(cell.y, 5, 'cell y is correct');
   });
 
   test('should returns neighbors from a set of coordinates', t => {
@@ -62,7 +80,7 @@ test('Grid', ({ test }) => {
       { x: x, y: y - 1 }, // top
       { x: x + 1, y: y - 1 }, // topRight
       { x: x + 1, y: y }, // right
-      { x: x + 1, y: 6 + 1 }, // bottomRight
+      { x: x + 1, y: y + 1 }, // bottomRight
       { x: x, y: y + 1 }, // bottom
       { x: x - 1, y: y + 1 }, // bottomLeft
       { x: x - 1, y: y }, // left
@@ -70,9 +88,9 @@ test('Grid', ({ test }) => {
     ];
 
     for(let i = 0; i < neighbors.length; i++) {
-      t.ok(neighbors[i] instanceof Cell);
-      t.equal(neighbors[i].x, coordinates[i].x);
-      t.equal(neighbors[i].y, coordinates[i].y);
+      t.ok(neighbors[i] instanceof Cell, 'neighbor is instance of Cell');
+      t.equal(neighbors[i].x, coordinates[i].x, 'neighbor x coordinate is correct');
+      t.equal(neighbors[i].y, coordinates[i].y, 'neighbor y coordinate is correct');
     }
 
     t.end();
@@ -88,7 +106,7 @@ test('Grid', ({ test }) => {
      * 1: walkable neighbors
      * 0: non walkable neighbors
      */
-    const neighbors = grid.getNeighborsAt(0, 0);
+    let neighbors = grid.getNeighborsAt(0, 0);
 
     /**
      * x 1
@@ -103,6 +121,8 @@ test('Grid', ({ test }) => {
      * x 0
      * 0 1
      */
+    neighbors = grid.getNeighborsAt(0, 0);
+
     t.equal(neighbors.length, 1);
   });
 });
