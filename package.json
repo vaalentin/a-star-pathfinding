@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "tape -r babel-register test/**/test-*.js | tap-spec",
+    "watch": "budo example/index.js --live -- -t babelify"
   },
   "repository": {
     "type": "git",
@@ -23,8 +24,14 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.3.13",
     "babel-register": "^6.4.3",
+    "babelify": "^7.2.0",
+    "budo": "^8.0.2",
     "math-utils": "^1.0.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.4.0"
+  },
+  "dependencies": {
+    "@vaalentin/binary-heap": "0.0.1",
+    "@vaalentin/game-loop": "^1.0.1"
   }
 }

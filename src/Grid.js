@@ -1,5 +1,15 @@
 import Cell from './Cell';
 
+const TOP = 1 << 0;
+const RIGHT = 1 << 1;
+const BOTTOM = 1 << 2;
+const LEFT = 1 << 3;
+
+const TOP_RIGHT = TOP | RIGHT;
+const BOTTOM_RIGHT = BOTTOM | RIGHT;
+const BOTTOM_LEFT = BOTTOM | LEFT;
+const TOP_LEFT = TOP | LEFT;
+
 /**
  * @class Grid
  */
@@ -10,10 +20,10 @@ export default class Grid {
    * @param {uint} [dy = 0]
    */
   constructor(dx = 0, dy = 0) {
-    this._dx = dx;
-    this._dy = dy;
+    this.dx = dx;
+    this.dy = dy;
 
-    this._cells = this.getCells(dx, dy);
+    this.cells = this.getCells(dx, dy);
   }
 
   /**
@@ -44,7 +54,7 @@ export default class Grid {
    * @param {uint} y
    */
   contains(x, y) {
-    return x >= 0 && x < this._dx && y >= 0 && y < this._dy;
+    return x >= 0 && x < this.dx && y >= 0 && y < this.dy;
   }
 
   /**
@@ -55,7 +65,7 @@ export default class Grid {
    * @returns {Cell}
    */
   getCellAt(x, y) {
-    return this._cells[x][y];
+    return this.cells[x][y];
   }
 
   /**
@@ -68,20 +78,14 @@ export default class Grid {
   getNeighborsAt(x, y) {
     const neighbors = [];
 
+    let flag = 0;
+
     // ↑
     if(this.contains(x, y - 1)) {
       const cell = this.getCellAt(x, y - 1);
 
       if(cell.isWalkable) {
-        neighbors.push(cell);
-      }
-    }
-
-    // ↗
-    if(this.contains(x + 1, y - 1)) {
-      const cell = this.getCellAt(x + 1, y - 1);
-
-      if(cell.isWalkable) {
+        flag |= TOP;
         neighbors.push(cell);
       }
     }
@@ -91,33 +95,17 @@ export default class Grid {
       const cell = this.getCellAt(x + 1, y);
 
       if(cell.isWalkable) {
+        flag |= RIGHT;
         neighbors.push(cell);
       }
     }
-    
-    // ↘
-    if(this.contains(x + 1, y + 1)) {
-      const cell = this.getCellAt(x + 1, y + 1);
 
-      if(cell.isWalkable) {
-        neighbors.push(cell);
-      }
-    }
-    
     // ↓
     if(this.contains(x, y + 1)) {
       const cell = this.getCellAt(x, y + 1);
 
       if(cell.isWalkable) {
-        neighbors.push(cell);
-      }
-    }
-    
-    // ↙
-    if(this.contains(x - 1, y + 1)) {
-      const cell = this.getCellAt(x - 1, y + 1);
-
-      if(cell.isWalkable) {
+        flag |= BOTTOM;
         neighbors.push(cell);
       }
     }
@@ -127,15 +115,43 @@ export default class Grid {
       const cell = this.getCellAt(x - 1, y);
 
       if(cell.isWalkable) {
+        flag |= LEFT;
+        neighbors.push(cell);
+      }
+    }
+    
+    // ↗
+    if(this.contains(x + 1, y - 1)) {
+      const cell = this.getCellAt(x + 1, y - 1);
+
+      if(cell.isWalkable && (flag & TOP_RIGHT) === TOP_RIGHT) {
         neighbors.push(cell);
       }
     }
 
+    // ↘
+    if(this.contains(x + 1, y + 1)) {
+      const cell = this.getCellAt(x + 1, y + 1);
+
+      if(cell.isWalkable && (flag & BOTTOM_RIGHT) === BOTTOM_RIGHT) {
+        neighbors.push(cell);
+      }
+    }
+    
+    // ↙
+    if(this.contains(x - 1, y + 1)) {
+      const cell = this.getCellAt(x - 1, y + 1);
+
+      if(cell.isWalkable && (flag & BOTTOM_LEFT) === BOTTOM_LEFT) {
+        neighbors.push(cell);
+      }
+    }
+    
     // ↖
     if(this.contains(x - 1, y - 1)) {
       const cell = this.getCellAt(x - 1, y - 1);
 
-      if(cell.isWalkable) {
+      if(cell.isWalkable && (flag & TOP_LEFT) === TOP_LEFT) {
         neighbors.push(cell);
       }
     }
@@ -148,10 +164,10 @@ export default class Grid {
    * @public
    */
   dispose() {
-    for(let cell of this._cells) {
+    for(let cell of this.cells) {
       cell.dispose();
     }
 
-    this._cells = null;
+    this.cells = null;
   }
 }
