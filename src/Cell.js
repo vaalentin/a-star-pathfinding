@@ -19,4 +19,8 @@ export default class Cell {
     this.G = -1;
     this.H = -1;
   }
+
+  dispose() {
+
+  }
 }
