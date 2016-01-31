@@ -18,10 +18,10 @@ test('Grid', ({ test }) => {
     
     const grid = new Grid(dx, dy);
 
-    t.equal(grid._cells.length, dx, grid._cells.length + ' columns');
+    t.equal(grid.cells.length, dx, grid.cells.length + ' columns');
     
-    for(let i = 0; i < grid._cells.length; i++) {
-      const row = grid._cells[i];
+    for(let i = 0; i < grid.cells.length; i++) {
+      const row = grid.cells[i];
       t.equal(row.length, dy, row.length + ' rows for column ' + i);
     }
 

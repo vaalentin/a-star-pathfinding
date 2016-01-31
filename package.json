@@ -4,7 +4,7 @@
   "description": "Simple A* pathfinding implementation.",
   "main": "dist/index.js",
   "scripts": {
-    "test": "tape -r babel-register test/**/*.js | tap-spec"
+    "test": "tape -r babel-register test/**/test-*.js | tap-spec",
   },
   "repository": {
     "type": "git",
