@@ -22,6 +22,24 @@ export default class Cell {
     this.parent = null;
   }
 
+  /**
+   * @method reset
+   * @public
+   */
+  reset() {
+    this.isOpen = false;
+    this.isClosed = false;
+
+    this.F = -1;
+    this.G = -1;
+    this.H = -1;
+
+    this.parent = null;
+  }
+
+  /**
+   * @method dispose
+   */
   dispose() {
 
   }

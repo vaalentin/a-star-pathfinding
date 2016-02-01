@@ -75,4 +75,26 @@ test('Cell', ({ test }) => {
     t.equal(cell.G, 2, 'G value is correct');
     t.equal(cell.H, 3, 'H value is correct');
   });
+
+  test('should be able to reset', t => {
+    t.plan(6);
+
+    const cell = new Cell(2, 3);
+
+    cell.isOpen = true;
+    cell.isClosed = true;
+    cell.F = 10;
+    cell.G = 10;
+    cell.H = 10;
+    cell.parent = new Cell(12, 2);
+
+    cell.reset();
+
+    t.equal(cell.isOpen, false, 'cell is no longer open');
+    t.equal(cell.isClosed, false, 'cell is no longer closed');
+    t.equal(cell.F, -1, 'cell F is reset');
+    t.equal(cell.G, -1, 'cell G is reset');
+    t.equal(cell.H, -1, 'cell H is reset');
+    t.equal(cell.parent, null, 'cell don\'t have a parent anymore');
+  });
 });
