@@ -35,6 +35,14 @@ test('Cell', ({ test }) => {
     t.equal(cell.isWalkable, false, 'cell is no longer walkable');
   });
 
+  test('should expose a parent attribute', t => {
+    t.plan(1);
+
+    const cell = new Cell();
+    
+    t.equal(cell.parent, null, 'cell parent is null');
+  });
+
   test('should expose a isOpen and isClosed attributes', t => {
     t.plan(4);
 

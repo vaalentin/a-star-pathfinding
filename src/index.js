@@ -13,6 +13,22 @@ export function manhattan(startX, startY, endX, endY) {
 }
 
 /**
+ * @function buildPath
+ * @param {Cell} cell
+ * @returns {uint[]}
+ */
+export function buildPath(cell) {
+  const path = [cell.x, cell.y];
+
+  while(cell.parent) {
+    cell = cell.parent;
+    path.push(cell.x, cell.y);
+  }
+
+  return path.reverse();
+}
+
+/**
  * @function findPath
  * @param {Grid} grid
  * @param {uint} startX
@@ -32,11 +48,11 @@ export function findPath(grid, startX, startY, endX, endY) {
   openCells.push(startCell);
   startCell.isOpen = true;
 
-  function nextStep() {
+  while(!openCells.isEmpty()) {
     const cell = openCells.pop();
 
     if(cell === endCell) {
-      return console.log('end');
+      return buildPath(endCell);
     }
 
     cell.isClosed = true;
@@ -53,7 +69,7 @@ export function findPath(grid, startX, startY, endX, endY) {
         distance = 1;
       } else {
         // diagonal
-        distance = Math.sqrt(2);
+        distance = Math.SQRT2;
       }
 
       const neighborG = cell.G + distance;
@@ -62,6 +78,7 @@ export function findPath(grid, startX, startY, endX, endY) {
         neighbor.G = neighborG;
         neighbor.H = manhattan(neighbor.x, neighbor.y, endCell.x, endCell.y);
         neighbor.F = neighbor.G + neighbor.H;
+        neighbor.parent = cell;
 
         if(!neighbor.isOpen) {
           openCells.push(neighbor);
@@ -73,9 +90,5 @@ export function findPath(grid, startX, startY, endX, endY) {
     }
   }
 
-  document.addEventListener('keydown', ({ keyCode }) => {
-    if(keyCode === 78) {
-      nextStep();
-    }
-  });
+  return [];
 }
