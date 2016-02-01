@@ -78,12 +78,12 @@ test('Grid', ({ test }) => {
 
     const coordinates = [
       { x: x, y: y - 1 }, // top
-      { x: x + 1, y: y - 1 }, // topRight
       { x: x + 1, y: y }, // right
-      { x: x + 1, y: y + 1 }, // bottomRight
       { x: x, y: y + 1 }, // bottom
-      { x: x - 1, y: y + 1 }, // bottomLeft
       { x: x - 1, y: y }, // left
+      { x: x + 1, y: y - 1 }, // topRight
+      { x: x + 1, y: y + 1 }, // bottomRight
+      { x: x - 1, y: y + 1 }, // bottomLeft
       { x: x - 1, y: y - 1 } // topLeft
     ];
 
@@ -97,7 +97,7 @@ test('Grid', ({ test }) => {
   });
 
   test('should ignore non walkable and offgrid neighbors', t => {
-    t.plan(2);
+    t.plan(3);
 
     const grid = new Grid(10, 10);
 
@@ -114,15 +114,29 @@ test('Grid', ({ test }) => {
      */
     t.equal(neighbors.length, 3);
 
-    grid.getCellAt(1, 0).isWalkable = false;
-    grid.getCellAt(0, 1).isWalkable = false;
+
+    /**
+     * x 1
+     * 1 0
+     */
+    grid.getCellAt(1, 1).isWalkable = false;
+
+    neighbors = grid.getNeighborsAt(0, 0);
+
+    t.equal(neighbors.length, 2);
 
     /**
      * x 0
      * 0 1
      */
+    grid.getCellAt(1, 1).isWalkable = true;
+    grid.getCellAt(1, 0).isWalkable = false;
+    grid.getCellAt(0, 1).isWalkable = false;
+
     neighbors = grid.getNeighborsAt(0, 0);
 
-    t.equal(neighbors.length, 1);
+    // since LEFT and BOTTOM are non walkable, BOTTOM_LEFT is non walkable to
+    // this is intended behavior, to avoid going through walls
+    t.equal(neighbors.length, 0);
   });
 });
