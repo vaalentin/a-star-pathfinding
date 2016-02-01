@@ -1,6 +1,13 @@
 import BinaryHeap from '@vaalentin/binary-heap';
 
 /**
+ * http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html
+ * Heuristic for grids
+ * 4 directions: manhattan
+ * 8 directions: diagonal
+ */
+
+/**
  * @function manhattan
  * @param {float} startX
  * @param {float} startY
@@ -9,7 +16,24 @@ import BinaryHeap from '@vaalentin/binary-heap';
  * @returns {float}
  */
 export function manhattan(startX, startY, endX, endY) {
-  return Math.abs(startX - endX) + Math.abs(startY - endY);
+  const dx = Math.abs(startX - endX);
+  const dy = Math.abs(startY - endY);
+  return dx + dy;
+}
+
+/**
+ * @function octile
+ * @param {float} startX
+ * @param {float} startY
+ * @param {float} endX
+ * @param {float} endY
+ * @returns {float}
+ */
+export function octile(startX, startY, endX, endY) {
+  const F = Math.SQRT2 - 1;
+  const dx = Math.abs(startX - endX);
+  const dy = Math.abs(startY - endY);
+  return dx < dy ? F * dx + dy : F * dy + dx;
 }
 
 /**
@@ -35,8 +59,10 @@ export function buildPath(cell) {
  * @param {uint} startY
  * @param {uint} endX
  * @param {uint} endY
+ * @param {boolean} [diagonal = false]
  */
-export function findPath(grid, startX, startY, endX, endY) {
+export function findPath(grid, startX, startY, endX, endY, diagonal = false) {
+  const heuristic = diagonal ? octile : manhattan;
   const openCells = new BinaryHeap((a, b) => a.F - b.F);
 
   const startCell = grid.getCellAt(startX, startY);
@@ -76,7 +102,7 @@ export function findPath(grid, startX, startY, endX, endY) {
 
       if(neighbor.isOpen || neighbor.G === -1 || neighborG < neighbor.G) {
         neighbor.G = neighborG;
-        neighbor.H = manhattan(neighbor.x, neighbor.y, endCell.x, endCell.y);
+        neighbor.H = heuristic(neighbor.x, neighbor.y, endCell.x, endCell.y);
         neighbor.F = neighbor.G + neighbor.H;
         neighbor.parent = cell;
 
