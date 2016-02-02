@@ -5,6 +5,9 @@ import BinaryHeap from '@vaalentin/binary-heap';
  * Heuristic for grids
  * 4 directions: manhattan
  * 8 directions: diagonal
+ *
+ * http://www.gamasutra.com/view/feature/131505/toward_more_realistic_pathfinding.php?page=2
+ * smooth path
  */
 
 /**
@@ -36,17 +39,23 @@ export function octile(startX, startY, endX, endY) {
   return dx < dy ? F * dx + dy : F * dy + dx;
 }
 
+export function euclidian(startX, startY, endX, endY) {
+  const dx = Math.abs(startX - endX);
+  const dy = Math.abs(startY - endY);
+  return Math.sqrt(dx * dx + dy * dy); 
+}
+
 /**
  * @function buildPath
  * @param {Cell} cell
  * @returns {uint[]}
  */
 export function buildPath(cell) {
-  const path = [cell.x, cell.y];
+  const path = [[cell.x, cell.y]];
 
   while(cell.parent) {
     cell = cell.parent;
-    path.push(cell.x, cell.y);
+    path.push([cell.x, cell.y]);
   }
 
   return path.reverse();
@@ -60,6 +69,7 @@ export function buildPath(cell) {
  * @param {uint} endX
  * @param {uint} endY
  * @param {boolean} [diagonal = false]
+ * @returns {uint[][]}
  */
 export function findPath(grid, startX, startY, endX, endY, diagonal = false) {
   const heuristic = diagonal ? octile : manhattan;
@@ -83,7 +93,7 @@ export function findPath(grid, startX, startY, endX, endY, diagonal = false) {
 
     cell.isClosed = true;
 
-    for(let neighbor of grid.getNeighborsAt(cell.x, cell.y)) {
+    for(let neighbor of grid.getNeighborsAt(cell.x, cell.y, diagonal)) {
       if(neighbor.isClosed) {
         continue;
       }
@@ -91,16 +101,14 @@ export function findPath(grid, startX, startY, endX, endY, diagonal = false) {
       let distance;
 
       if(neighbor.x - cell.x === 0 || neighbor.y - cell.y === 0) {
-        // horizontal/vertical
         distance = 1;
       } else {
-        // diagonal
         distance = Math.SQRT2;
       }
 
       const neighborG = cell.G + distance;
 
-      if(neighbor.isOpen || neighbor.G === -1 || neighborG < neighbor.G) {
+      if(neighbor.isOpen || neighborG < neighbor.G) {
         neighbor.G = neighborG;
         neighbor.H = heuristic(neighbor.x, neighbor.y, endCell.x, endCell.y);
         neighbor.F = neighbor.G + neighbor.H;
@@ -114,6 +122,8 @@ export function findPath(grid, startX, startY, endX, endY, diagonal = false) {
         }
       }
     }
+
+    debugger;
   }
 
   return [];

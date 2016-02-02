@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@vaalentin/binary-heap": "0.0.1",
-    "@vaalentin/game-loop": "^1.0.1"
+    "@vaalentin/game-loop": "^1.0.1",
+    "bitwise-mask": "0.0.1"
   }
 }

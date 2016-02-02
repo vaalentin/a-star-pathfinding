@@ -63,9 +63,9 @@ test('Cell', ({ test }) => {
 
     const cell = new Cell(2, 3);
 
-    t.equal(cell.F, -1, 'F is -1 by default');
-    t.equal(cell.G, -1, 'G is -1 by default');
-    t.equal(cell.H, -1, 'H is -1 by default');
+    t.equal(cell.F, Infinity, 'F is Infinity by default');
+    t.equal(cell.G, Infinity, 'G is Infinity by default');
+    t.equal(cell.H, Infinity, 'H is Infinity by default');
 
     cell.F = 1;
     cell.G = 2;

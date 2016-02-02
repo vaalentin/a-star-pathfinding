@@ -1,4 +1,5 @@
 import Cell from './Cell';
+import * as bitmask from 'bitwise-mask';
 
 const TOP = 1 << 0;
 const RIGHT = 1 << 1;
@@ -73,19 +74,20 @@ export default class Grid {
    * @public
    * @param {uint} x
    * @param {uint} y
+   * @param {boolean} [diagonal = false]
    * @returns {Cell[]}
    */
-  getNeighborsAt(x, y) {
+  getNeighborsAt(x, y, diagonal = false) {
     const neighbors = [];
 
-    let flag = 0;
+    let mask = bitmask.create();
 
     // ↑
     if(this.contains(x, y - 1)) {
       const cell = this.getCellAt(x, y - 1);
 
       if(cell.isWalkable) {
-        flag |= TOP;
+        mask = bitmask.add(mask, TOP);
         neighbors.push(cell);
       }
     }
@@ -95,7 +97,7 @@ export default class Grid {
       const cell = this.getCellAt(x + 1, y);
 
       if(cell.isWalkable) {
-        flag |= RIGHT;
+        mask = bitmask.add(mask, RIGHT);
         neighbors.push(cell);
       }
     }
@@ -105,7 +107,7 @@ export default class Grid {
       const cell = this.getCellAt(x, y + 1);
 
       if(cell.isWalkable) {
-        flag |= BOTTOM;
+        mask = bitmask.add(mask, BOTTOM);
         neighbors.push(cell);
       }
     }
@@ -115,44 +117,46 @@ export default class Grid {
       const cell = this.getCellAt(x - 1, y);
 
       if(cell.isWalkable) {
-        flag |= LEFT;
+        mask = bitmask.add(mask, LEFT);
         neighbors.push(cell);
       }
     }
     
-    // ↗
-    if(this.contains(x + 1, y - 1)) {
-      const cell = this.getCellAt(x + 1, y - 1);
+    if(diagonal) {
+      // ↗
+      if(this.contains(x + 1, y - 1)) {
+        const cell = this.getCellAt(x + 1, y - 1);
 
-      if(cell.isWalkable && (flag & TOP_RIGHT) === TOP_RIGHT) {
-        neighbors.push(cell);
+        if(cell.isWalkable && bitmask.contains(mask, TOP_RIGHT)) {
+          neighbors.push(cell);
+        }
       }
-    }
 
-    // ↘
-    if(this.contains(x + 1, y + 1)) {
-      const cell = this.getCellAt(x + 1, y + 1);
+      // ↘
+      if(this.contains(x + 1, y + 1)) {
+        const cell = this.getCellAt(x + 1, y + 1);
 
-      if(cell.isWalkable && (flag & BOTTOM_RIGHT) === BOTTOM_RIGHT) {
-        neighbors.push(cell);
+        if(cell.isWalkable && bitmask.contains(mask, BOTTOM_RIGHT)) {
+          neighbors.push(cell);
+        }
       }
-    }
-    
-    // ↙
-    if(this.contains(x - 1, y + 1)) {
-      const cell = this.getCellAt(x - 1, y + 1);
+      
+      // ↙
+      if(this.contains(x - 1, y + 1)) {
+        const cell = this.getCellAt(x - 1, y + 1);
 
-      if(cell.isWalkable && (flag & BOTTOM_LEFT) === BOTTOM_LEFT) {
-        neighbors.push(cell);
+        if(cell.isWalkable && bitmask.contains(mask, BOTTOM_LEFT)) {
+          neighbors.push(cell);
+        }
       }
-    }
-    
-    // ↖
-    if(this.contains(x - 1, y - 1)) {
-      const cell = this.getCellAt(x - 1, y - 1);
+      
+      // ↖
+      if(this.contains(x - 1, y - 1)) {
+        const cell = this.getCellAt(x - 1, y - 1);
 
-      if(cell.isWalkable && (flag & TOP_LEFT) === TOP_LEFT) {
-        neighbors.push(cell);
+        if(cell.isWalkable && bitmask.contains(mask, TOP_LEFT)) {
+          neighbors.push(cell);
+        }
       }
     }
     

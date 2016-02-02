@@ -15,9 +15,9 @@ export default class Cell {
     this.isOpen = false;
     this.isClosed = false;
 
-    this.F = -1;
-    this.G = -1;
-    this.H = -1;
+    this.F = Infinity;
+    this.G = Infinity;
+    this.H = Infinity;
 
     this.parent = null;
   }
@@ -30,9 +30,9 @@ export default class Cell {
     this.isOpen = false;
     this.isClosed = false;
 
-    this.F = -1;
-    this.G = -1;
-    this.H = -1;
+    this.F = Infinity;
+    this.G = Infinity;
+    this.H = Infinity;
 
     this.parent = null;
   }
